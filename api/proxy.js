@@ -11,10 +11,9 @@ export default async function handler(req, res) {
         const outgoingHeaders = {
             // 'User-Agent': 'Vercel-Serverless-Proxy/1.0',
             'Accept': '*/*',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'Connection': 'keep-alive',
+         
             // Optional: Forward the user's IP or other info if desired
-            'X-Forwarded-For': req.headers['x-forwarded-for'] || req.socket.remoteAddress,
+           
         };
 
         // 2. Perform the actual fetch with these headers
