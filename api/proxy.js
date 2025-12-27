@@ -1,40 +1,57 @@
-// api/proxy.js
-export default async function handler(req, res) {
+import http from "http";
+import https from "https";
+import { URL } from "url";
+
+export const config = {
+  runtime: "nodejs",
+};
+
+export default function handler(req, res) {
   const { targetUrl } = req.query;
 
   if (!targetUrl) {
-    return res.status(400).json({ error: 'URL is required' });
+    return res.status(400).json({ error: "URL is required" });
   }
 
-  // User Requirement: Request header only contains "Accept": "/"
-  const customHeaders = {
-    "Accept": "/"
+  let urlObj;
+  try {
+    urlObj = new URL(targetUrl);
+  } catch {
+    return res.status(400).json({ error: "Invalid URL" });
+  }
+
+  const lib = urlObj.protocol === "https:" ? https : http;
+
+  // Your strict requirement: ONLY Accept header
+  const requestHeaders = {
+    Accept: "/",
   };
 
-  try {
-    const response = await fetch(targetUrl, {
-      method: 'GET',
-      headers: customHeaders
-    });
+  const proxyReq = lib.request(
+    urlObj,
+    {
+      method: "GET",
+      headers: requestHeaders,
+    },
+    (proxyRes) => {
+      let body = "";
+      proxyRes.setEncoding("utf8");
 
-    const data = await response.text();
+      proxyRes.on("data", (chunk) => (body += chunk));
+      proxyRes.on("end", () => {
+        res.status(200).json({
+          requestHeaders,
+          responseHeaders: proxyRes.headers,
+          status: proxyRes.statusCode,
+          content: body,
+        });
+      });
+    }
+  );
 
-    // Convert Headers object to a plain JSON object for display
-    const responseHeaders = {};
-    response.headers.forEach((value, key) => {
-      responseHeaders[key] = value;
-    });
+  proxyReq.on("error", (err) => {
+    res.status(500).json({ error: "Failed to fetch URL", details: err.message });
+  });
 
-    res.status(200).json({
-      requestHeaders: customHeaders,
-      responseHeaders: responseHeaders,
-      content: data
-    });
-
-  } catch (error) {
-    res.status(500).json({ 
-      error: 'Failed to fetch URL', 
-      details: error.message 
-    });
-  }
+  proxyReq.end();
 }
