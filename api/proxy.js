@@ -9,7 +9,7 @@ export default async function handler(req, res) {
         // 1. Define the headers Vercel will send to the target
         // We can mimic a browser or just use Node defaults
         const outgoingHeaders = {
-            'User-Agent': 'Vercel-Serverless-Proxy/1.0',
+            // 'User-Agent': 'Vercel-Serverless-Proxy/1.0',
             'Accept': '*/*',
             'Accept-Encoding': 'gzip, deflate, br',
             'Connection': 'keep-alive',
