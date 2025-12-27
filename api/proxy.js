@@ -24,8 +24,8 @@ export default function handler(req, res) {
 
   // Your strict requirement: ONLY Accept header
   const requestHeaders = {
-    Accept: "/",
-    User-Agent: "WhatsApp/3.22.862"
+    "Accept": "/",
+    "User-Agent": "WhatsApp/3.22.862"
   };
 
   const proxyReq = lib.request(
