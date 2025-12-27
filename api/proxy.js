@@ -1,43 +1,40 @@
+// api/proxy.js
 export default async function handler(req, res) {
-    const { url } = req.query;
+  const { targetUrl } = req.query;
 
-    if (!url) {
-        return res.status(400).json({ error: 'Missing URL parameter' });
-    }
+  if (!targetUrl) {
+    return res.status(400).json({ error: 'URL is required' });
+  }
 
-    try {
-        // 1. Define the headers Vercel will send to the target
-        // We can mimic a browser or just use Node defaults
-        const outgoingHeaders = {
-            // 'User-Agent': 'Vercel-Serverless-Proxy/1.0',
-            'Accept': '*/*',
-         
-            // Optional: Forward the user's IP or other info if desired
-           
-        };
+  // User Requirement: Request header only contains "Accept": "/"
+  const customHeaders = {
+    "Accept": "/"
+  };
 
-        // 2. Perform the actual fetch with these headers
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: outgoingHeaders
-        });
+  try {
+    const response = await fetch(targetUrl, {
+      method: 'GET',
+      headers: customHeaders
+    });
 
-        const body = await response.text();
+    const data = await response.text();
 
-        // 3. Capture the headers the Target sent back to Vercel
-        const targetResponseHeaders = {};
-        response.headers.forEach((value, key) => {
-            targetResponseHeaders[key] = value;
-        });
+    // Convert Headers object to a plain JSON object for display
+    const responseHeaders = {};
+    response.headers.forEach((value, key) => {
+      responseHeaders[key] = value;
+    });
 
-        // 4. Return everything to your browser
-        res.status(200).json({
-            browserToVercel: req.headers,      // What your browser sent to Vercel
-            vercelToTarget: outgoingHeaders,   // What Vercel sent to the URL (NEW)
-            targetToVercel: targetResponseHeaders, // What the URL sent back
-            body: body
-        });
-    } catch (error) {
-        res.status(500).json({ error: `Fetch Error: ${error.message}` });
-    }
+    res.status(200).json({
+      requestHeaders: customHeaders,
+      responseHeaders: responseHeaders,
+      content: data
+    });
+
+  } catch (error) {
+    res.status(500).json({ 
+      error: 'Failed to fetch URL', 
+      details: error.message 
+    });
+  }
 }
