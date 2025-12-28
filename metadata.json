@@ -1,0 +1,5 @@
+{
+  "name": "OG Image Fetcher",
+  "description": "A simple tool to extract and display the Open Graph (og:image) from any website URL.",
+  "requestFramePermissions": []
+}

@@ -1,0 +1,1 @@
+// Deleted: Code migrated to Next.js structure

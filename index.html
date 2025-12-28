@@ -1,94 +1,20 @@
-<!-- index.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vercel URL Fetcher</title>
-    <style>
-        body { font-family: monospace; padding: 20px; max-width: 800px; margin: 0 auto; background: #f4f4f4; }
-        .row { margin-bottom: 15px; }
-        label { display: block; font-weight: bold; margin-bottom: 5px; }
-        input[type="text"], textarea { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
-        textarea { height: 100px; background: #fff; color: #333; resize: vertical; }
-        button { padding: 10px 20px; background: #000; color: #fff; border: none; cursor: pointer; border-radius: 4px; }
-        button:hover { background: #333; }
-        .status { color: #666; font-size: 0.9em; margin-left: 10px; }
-    </style>
+<!doctype html>
+<html>
+<head><link rel="stylesheet" href="/index.css">
 </head>
 <body>
-
-    <h1>Simple URL Fetcher</h1>
-
-    <!-- Row 1: Input Form -->
-    <div class="row">
-        <label>1. Target URL</label>
-        <div style="display: flex; gap: 10px;">
-            <input type="text" id="urlInput" placeholder="https://example.com" value="https://example.com">
-            <button onclick="fetchUrl()">Fetch</button>
-        </div>
-        <span id="statusText" class="status"></span>
-    </div>
-
-    <!-- Row 2: Request Header (Box 1) -->
-    <div class="row">
-        <label>2. Request Headers (Vercel -> Remote)</label>
-        <textarea id="box1" readonly></textarea>
-    </div>
-
-    <!-- Row 3: Response Header (Box 2) -->
-    <div class="row">
-        <label>3. Response Headers (Remote -> Vercel)</label>
-        <textarea id="box2" readonly></textarea>
-    </div>
-
-    <!-- Row 4: Response Content (Box 3) -->
-    <div class="row">
-        <label>4. Response Content</label>
-        <textarea id="box3" readonly style="height: 300px;"></textarea>
-    </div>
-
-    <script>
-        async function fetchUrl() {
-            const url = document.getElementById('urlInput').value;
-            const statusText = document.getElementById('statusText');
-            const box1 = document.getElementById('box1');
-            const box2 = document.getElementById('box2');
-            const box3 = document.getElementById('box3');
-
-            // Reset boxes
-            statusText.textContent = "Loading...";
-            box1.value = "";
-            box2.value = "";
-            box3.value = "";
-
-            try {
-                // Call our internal Vercel API
-                const res = await fetch(`/api/proxy?targetUrl=${encodeURIComponent(url)}`);
-                const data = await res.json();
-
-                if (data.error) {
-                    statusText.textContent = "Error: " + data.details;
-                    box3.value = JSON.stringify(data, null, 2);
-                    return;
-                }
-
-                statusText.textContent = "Success";
-
-                // Box 1: Request Headers
-                box1.value = JSON.stringify(data.requestHeaders, null, 2);
-
-                // Box 2: Response Headers
-                box2.value = JSON.stringify(data.responseHeaders, null, 2);
-
-                // Box 3: Response Content
-                box3.value = data.content;
-
-            } catch (err) {
-                statusText.textContent = "Client Error";
-                box3.value = err.message;
-            }
-        }
-    </script>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "next/": "https://esm.sh/next@^16.1.1/",
+    "next": "https://esm.sh/next@^16.1.1"
+  }
+}
+</script>
+<!-- Deleted: Code migrated to Next.js structure (app/layout.tsx) -->
+<script type="module" src="/index.tsx"></script>
 </body>
 </html>
