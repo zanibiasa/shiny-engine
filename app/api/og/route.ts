@@ -14,7 +14,7 @@ export async function GET(request: Request) {
 
     const response = await fetch(targetUrl, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; OGMetadataFetcher/1.0;)'
+        "User-Agent": "WhatsApp/3.22.862"
       },
       next: { revalidate: 3600 } // Cache results for 1 hour
     } as any);
